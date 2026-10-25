@@ -1,0 +1,14 @@
+"""
+GraphQL-Schema des TrainingsPlanAssistant-Gateways.
+Wird in den nächsten Phasen um Auth, Pläne und Übungen erweitert.
+"""
+type Query {
+  "Lebenszeichen des Gateways"
+  health: Health!
+}
+
+type Health {
+  status: String!
+  "Zeitpunkt der Antwort (ISO 8601)"
+  time: String!
+}

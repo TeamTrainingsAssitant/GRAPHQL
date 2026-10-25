@@ -38,4 +38,5 @@ cp .env.example .env
 npm run dev
 ```
 
-Der Server-Code folgt in den nächsten Phasen.
+Danach läuft GraphQL (mit GraphiQL im Browser) unter http://localhost:4000/graphql.
+Test-Anfrage: `{ health { status time } }`. Tests: `npm test`.
