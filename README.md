@@ -40,3 +40,17 @@ npm run dev
 
 Danach läuft GraphQL (mit GraphiQL im Browser) unter http://localhost:4000/graphql.
 Test-Anfrage: `{ health { status time } }`. Tests: `npm test`.
+
+## Fehlercodes
+
+Fehler des Backends kommen als GraphQL-Fehler mit `extensions.code` an:
+
+| Backend-Status | `extensions.code` |
+|---|---|
+| 400 | `BAD_USER_INPUT` |
+| 401 | `UNAUTHENTICATED` |
+| 403 | `FORBIDDEN` |
+| 404 | `NOT_FOUND` |
+| 409 | `CONFLICT` |
+| 502, Backend nicht erreichbar, Timeout | `UPSTREAM_UNAVAILABLE` |
+| sonstige 5xx | `INTERNAL_SERVER_ERROR` |
