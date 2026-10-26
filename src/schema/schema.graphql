@@ -17,6 +17,21 @@ type Query {
 
   "Ein Plan des angemeldeten Nutzers (GET /plans/{id})"
   plan(id: ID!): Plan!
+
+  "Schnellsuche nach Übungsnamen, höchstens 50 Treffer (GET /exercises)"
+  searchExercises(name: String = "", limit: Int = 20): [Exercise!]!
+
+  "Übungskatalog mit Filter und Paginierung (GET /exercisedb/exercises)"
+  exercises(name: String, muscles: [String!], offset: Int = 0, limit: Int = 20): ExerciseList!
+
+  "Eine Übung mit Anleitung (GET /exercisedb/exercises/{externalId})"
+  exercise(externalId: ID!): Exercise!
+
+  "Alle Muskelgruppen des Katalogs (GET /exercisedb/muscles)"
+  muscles: [String!]!
+
+  "Alle Körperregionen des Katalogs (GET /exercisedb/bodyparts)"
+  bodyParts: [String!]!
 }
 
 type Mutation {
@@ -112,6 +127,27 @@ type PlanExercise {
   weight: Float
   sets: Int
   reps: Int
+}
+
+"""
+Übung aus dem Katalog. Daten: ExerciseDB (nur nicht-kommerzielle Nutzung, Quelle in der UI angeben).
+bodyParts und equipments gibt es nicht bei searchExercises, instructions nur bei exercise.
+"""
+type Exercise {
+  externalId: ID!
+  name: String!
+  gifUrl: String
+  primaryMuscleGroups: [String!]!
+  secondaryMuscleGroups: [String!]!
+  bodyParts: [String!]
+  equipments: [String!]
+  instructions: [String!]
+}
+
+type ExerciseList {
+  "Anzahl aller Treffer, unabhängig von offset und limit"
+  total: Int!
+  exercises: [Exercise!]!
 }
 
 "Trainingsplan. Übungen werden nur geladen, wenn sie angefragt werden."

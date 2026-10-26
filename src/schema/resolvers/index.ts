@@ -1,4 +1,5 @@
 import { authResolvers } from './auth.js';
+import { exerciseResolvers } from './exercise.js';
 import { planResolvers } from './plan.js';
 import { userResolvers } from './user.js';
 
@@ -7,6 +8,7 @@ export const resolvers = {
     health: () => ({ status: 'ok', time: new Date().toISOString() }),
     ...userResolvers.Query,
     ...planResolvers.Query,
+    ...exerciseResolvers.Query,
   },
   Mutation: {
     ...authResolvers.Mutation,
