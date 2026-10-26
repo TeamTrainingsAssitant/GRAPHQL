@@ -1,12 +1,12 @@
 import { graphql } from 'graphql';
 import { describe, expect, it, vi } from 'vitest';
-import type { GraphQLContext } from '../src/context.js';
+import { buildContext } from '../src/context.js';
 import { schema } from '../src/schema/index.js';
 
 // Führt eine Abfrage gegen das echte Schema aus, das Backend ist durch eine Attrappe ersetzt
 function run(source: string, backendResult: unknown, token?: string) {
   const request = vi.fn().mockResolvedValue(backendResult);
-  const contextValue: GraphQLContext = { token, backend: { request } };
+  const contextValue = buildContext(token, { request });
   return graphql({ schema, source, contextValue }).then((result) => ({ result, request }));
 }
 

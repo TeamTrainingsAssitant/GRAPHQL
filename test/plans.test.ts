@@ -1,6 +1,6 @@
 import { graphql } from 'graphql';
 import { describe, expect, it, vi } from 'vitest';
-import type { GraphQLContext } from '../src/context.js';
+import { buildContext } from '../src/context.js';
 import { schema } from '../src/schema/index.js';
 
 // Attrappe: antwortet je nach "METHOD /pfad" mit vorbereiteten Daten
@@ -10,7 +10,7 @@ function run(source: string, responses: Record<string, unknown>, token = 'tok') 
     if (!(key in responses)) throw new Error(`Unerwarteter Backend-Aufruf: ${key}`);
     return responses[key];
   });
-  const contextValue: GraphQLContext = { token, backend: { request } };
+  const contextValue = buildContext(token, { request });
   return graphql({ schema, source, contextValue }).then((result) => ({ result, request }));
 }
 
@@ -58,6 +58,58 @@ describe('Pläne lesen', () => {
     });
 
     expect(result.data).toEqual({ plans: [{ createdAt: '2026-10-20T09:00:00' }] });
+  });
+});
+
+describe('DataLoader', () => {
+  const second = { ...listItem, id: 2, name: 'Pull' };
+  const exportData = {
+    user: { userId: 1, username: 'a', email: 'a@b.de', createdAt: '2026-10-01' },
+    plans: [
+      { ...detail, exercises: [bench] },
+      { ...detail, id: 2, name: 'Pull', createdAt: '2026-10-21T09:00:00', exercises: [] },
+    ],
+  };
+
+  it('holt die Übungen mehrerer Pläne mit einem einzigen Export-Aufruf', async () => {
+    const { result, request } = await run('{ plans { name exercises { name } } }', {
+      'GET /plans': [listItem, second],
+      'GET /users/me/export': exportData,
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      plans: [
+        { name: 'Push', exercises: [{ name: 'Bench Press' }] },
+        { name: 'Pull', exercises: [] },
+      ],
+    });
+    expect(request).toHaveBeenCalledTimes(2);
+  });
+
+  it('teilt sich den Export-Aufruf zwischen exercises und createdAt', async () => {
+    const { result, request } = await run('{ plans { createdAt exercises { name } } }', {
+      'GET /plans': [listItem, second],
+      'GET /users/me/export': exportData,
+    });
+
+    expect(result.data).toEqual({
+      plans: [
+        { createdAt: '2026-10-20T09:00:00', exercises: [{ name: 'Bench Press' }] },
+        { createdAt: '2026-10-21T09:00:00', exercises: [] },
+      ],
+    });
+    expect(request).toHaveBeenCalledTimes(2);
+  });
+
+  it('fragt exercises und exerciseCount desselben Plans nur einmal ab', async () => {
+    const { result, request } = await run('{ plans { exerciseCount exercises { name } } }', {
+      'GET /plans': [listItem],
+      'GET /plans/1/exercises': [bench],
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(request).toHaveBeenCalledTimes(2);
   });
 });
 

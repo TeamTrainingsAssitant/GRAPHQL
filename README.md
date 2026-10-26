@@ -41,6 +41,16 @@ npm run dev
 Danach läuft GraphQL (mit GraphiQL im Browser) unter http://localhost:4000/graphql.
 Test-Anfrage: `{ health { status time } }`. Tests: `npm test`.
 
+## Performance
+
+- **DataLoader** (`src/loaders/planLoaders.ts`): Bei `plans { exercises }` würde sonst pro Plan ein Backend-Aufruf
+  entstehen (N+1). Die Loader fassen mehrere Pläne zu einem Aufruf von `GET /users/me/export` zusammen und
+  fragen dieselben Daten innerhalb einer Anfrage nur einmal ab. Sie leben pro Anfrage, es gibt keine Nutzerdaten
+  im geteilten Speicher.
+- **TTL-Cache** (`src/cache/ttlCache.ts`): Muskeln, Körperregionen und Übungsdetails sind für alle Nutzer gleich
+  und werden `CACHE_TTL_SECONDS` lang zwischengespeichert. Nutzerdaten werden nie gecacht. Cache-Treffer
+  setzen einen Token im Header voraus, prüfen ihn aber nicht gegen das Backend.
+
 ## Fehlercodes
 
 Fehler des Backends kommen als GraphQL-Fehler mit `extensions.code` an:

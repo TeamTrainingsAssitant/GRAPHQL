@@ -49,15 +49,16 @@ export const planResolvers = {
     ) => planApi.removeExercise(backend, args.planId, args.planExerciseId),
   },
 
-  // Feld-Resolver: Felder, die das Backend je nach Endpunkt nicht mitliefert, werden nachgeladen
+  // Feld-Resolver: Felder, die das Backend je nach Endpunkt nicht mitliefert, werden nachgeladen.
+  // Das läuft über die DataLoader, die mehrere Pläne in einem Backend-Aufruf zusammenfassen.
   Plan: {
-    exercises: (parent: BackendPlan, _args: unknown, { backend }: GraphQLContext) =>
-      planApi.listExercises(backend, String(parent.id)),
+    exercises: (parent: BackendPlan, _args: unknown, { loaders }: GraphQLContext) =>
+      loaders.exercisesByPlan.load(String(parent.id)),
 
-    exerciseCount: async (parent: BackendPlan, _args: unknown, { backend }: GraphQLContext) =>
-      parent.exerciseCount ?? (await planApi.listExercises(backend, String(parent.id))).length,
+    exerciseCount: async (parent: BackendPlan, _args: unknown, { loaders }: GraphQLContext) =>
+      parent.exerciseCount ?? (await loaders.exercisesByPlan.load(String(parent.id))).length,
 
-    createdAt: async (parent: BackendPlan, _args: unknown, { backend }: GraphQLContext) =>
-      parent.createdAt ?? (await planApi.get(backend, String(parent.id))).createdAt,
+    createdAt: async (parent: BackendPlan, _args: unknown, { loaders }: GraphQLContext) =>
+      parent.createdAt ?? (await loaders.planById.load(String(parent.id))).createdAt,
   },
 };

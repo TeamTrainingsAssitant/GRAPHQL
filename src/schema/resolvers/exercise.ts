@@ -1,5 +1,12 @@
 import { exerciseApi, type ExerciseFilter } from '../../clients/exerciseApi.js';
-import type { GraphQLContext } from '../../context.js';
+import { requireToken, type GraphQLContext } from '../../context.js';
+
+// Katalogdaten sind für alle Nutzer gleich und ändern sich selten, deshalb werden sie zwischengespeichert.
+// Der Cache prüft den Token nicht. Damit er die Anmeldung nicht umgeht, verlangen wir vorher wenigstens einen.
+function cached<T>(context: GraphQLContext, key: string, load: () => Promise<T>): Promise<T> {
+  requireToken(context);
+  return context.cache.wrap(key, load) as Promise<T>;
+}
 
 export const exerciseResolvers = {
   Query: {
@@ -12,13 +19,15 @@ export const exerciseResolvers = {
     exercises: (_parent: unknown, args: ExerciseFilter, { backend }: GraphQLContext) =>
       exerciseApi.list(backend, args),
 
-    exercise: (_parent: unknown, args: { externalId: string }, { backend }: GraphQLContext) =>
-      exerciseApi.get(backend, args.externalId),
+    exercise: (_parent: unknown, args: { externalId: string }, context: GraphQLContext) =>
+      cached(context, `exercise:${args.externalId}`, () =>
+        exerciseApi.get(context.backend, args.externalId),
+      ),
 
-    muscles: (_parent: unknown, _args: unknown, { backend }: GraphQLContext) =>
-      exerciseApi.muscles(backend),
+    muscles: (_parent: unknown, _args: unknown, context: GraphQLContext) =>
+      cached(context, 'muscles', () => exerciseApi.muscles(context.backend)),
 
-    bodyParts: (_parent: unknown, _args: unknown, { backend }: GraphQLContext) =>
-      exerciseApi.bodyParts(backend),
+    bodyParts: (_parent: unknown, _args: unknown, context: GraphQLContext) =>
+      cached(context, 'bodyParts', () => exerciseApi.bodyParts(context.backend)),
   },
 };
