@@ -11,6 +11,12 @@ type Query {
 
   "Alle Daten des angemeldeten Nutzers inklusive Pläne und Übungen (GET /users/me/export)"
   exportMyData: UserExport!
+
+  "Alle Pläne des angemeldeten Nutzers (GET /plans)"
+  plans: [Plan!]!
+
+  "Ein Plan des angemeldeten Nutzers (GET /plans/{id})"
+  plan(id: ID!): Plan!
 }
 
 type Mutation {
@@ -25,6 +31,31 @@ type Mutation {
 
   "Konto löschen, zur Sicherheit mit Passwort (DELETE /users/me)"
   deleteAccount(password: String!): MessageResult!
+
+  "Plan anlegen (POST /plans)"
+  createPlan(input: PlanInput!): Plan!
+
+  "Plan ändern (PUT /plans/{id}), ersetzt Name und Beschreibung"
+  updatePlan(id: ID!, input: PlanInput!): Plan!
+
+  "Plan samt Übungen löschen (DELETE /plans/{id})"
+  deletePlan(id: ID!): MessageResult!
+
+  "Übung zu einem Plan hinzufügen (POST /plans/{id}/exercises)"
+  addExerciseToPlan(planId: ID!, input: AddPlanExerciseInput!): PlanExercise!
+
+  """
+  Notiz, Gewicht, Sätze und Wiederholungen einer Übung ändern (PUT /plans/{id}/exercises/{peId}).
+  Nicht angegebene Felder werden entfernt (null), wie beim REST-Endpunkt.
+  """
+  updatePlanExercise(
+    planId: ID!
+    planExerciseId: ID!
+    input: UpdatePlanExerciseInput!
+  ): PlanExercise!
+
+  "Übung aus einem Plan entfernen (DELETE /plans/{id}/exercises/{peId})"
+  removePlanExercise(planId: ID!, planExerciseId: ID!): MessageResult!
 }
 
 type Health {
@@ -78,6 +109,43 @@ type PlanExercise {
   position: Int!
   note: String
   "Gewicht in kg"
+  weight: Float
+  sets: Int
+  reps: Int
+}
+
+"Trainingsplan. Übungen werden nur geladen, wenn sie angefragt werden."
+type Plan {
+  id: ID!
+  name: String!
+  description: String
+  createdAt: String!
+  updatedAt: String!
+  exerciseCount: Int!
+  "Übungen in der Reihenfolge des Plans (GET /plans/{id}/exercises)"
+  exercises: [PlanExercise!]!
+}
+
+input PlanInput {
+  name: String!
+  description: String
+}
+
+input AddPlanExerciseInput {
+  "ID der Übung aus ExerciseDB"
+  externalId: String!
+  "höchstens 500 Zeichen"
+  note: String
+  "0 bis 1000 kg"
+  weight: Float
+  "1 bis 20"
+  sets: Int
+  "1 bis 100"
+  reps: Int
+}
+
+input UpdatePlanExerciseInput {
+  note: String
   weight: Float
   sets: Int
   reps: Int
