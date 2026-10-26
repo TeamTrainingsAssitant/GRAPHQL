@@ -41,6 +41,31 @@ npm run dev
 Danach läuft GraphQL (mit GraphiQL im Browser) unter http://localhost:4000/graphql.
 Test-Anfrage: `{ health { status time } }`. Tests: `npm test`.
 
+## Konfiguration
+
+Alle Einstellungen kommen aus Umgebungsvariablen (siehe `.env.example`):
+
+| Variable | Bedeutung | Standard |
+|---|---|---|
+| `PORT` | Port des Gateways (Heroku setzt ihn selbst) | `4000` |
+| `BACKEND_BASE_URL` | Basis-URL des Spring-Backends | `http://localhost:8080/api/v1` |
+| `CORS_ORIGINS` | erlaubte Frontend-Adressen, kommagetrennt | `localhost` auf 4200, 5500, 8000 |
+| `CACHE_TTL_SECONDS` | Lebensdauer des Katalog-Caches | `300` |
+
+## Deployment (Heroku)
+
+Das `Procfile` startet `node dist/index.js`. Heroku führt beim Deploy `npm install` und `npm run build` aus.
+
+```
+heroku create <gateway-app-name>
+heroku config:set BACKEND_BASE_URL=https://trainingsplan-backend-6a384026392a.herokuapp.com/api/v1
+heroku config:set CORS_ORIGINS=https://trainingsplan-frontend-be8f5157e428.herokuapp.com
+git push heroku main
+```
+
+Danach die Adresse `https://<gateway-app-name>.herokuapp.com/graphql` im Frontend in
+`angular/src/app/config.ts` eintragen. Beispiel-Anfragen: [docs/beispiel-queries.md](docs/beispiel-queries.md).
+
 ## Performance
 
 - **DataLoader** (`src/loaders/planLoaders.ts`): Bei `plans { exercises }` würde sonst pro Plan ein Backend-Aufruf
