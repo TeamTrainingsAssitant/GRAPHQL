@@ -24,6 +24,9 @@ type Query {
   "Übungskatalog mit Filter und Paginierung (GET /exercisedb/exercises)"
   exercises(name: String, muscles: [String!], offset: Int = 0, limit: Int = 20): ExerciseList!
 
+  "Ähnliche Übungen für eine Planübung (GET /plans/{id}/exercises/{exerciseId}/alternatives)"
+  alternativesForPlanExercise(planId: ID!, planExerciseId: ID!, limit: Int = 5): [Exercise!]!
+
   "Eine Übung mit Anleitung (GET /exercisedb/exercises/{externalId})"
   exercise(externalId: ID!): Exercise!
 
@@ -71,6 +74,9 @@ type Mutation {
 
   "Übung aus einem Plan entfernen (DELETE /plans/{id}/exercises/{peId})"
   removePlanExercise(planId: ID!, planExerciseId: ID!): MessageResult!
+
+  "Ersetzt eine Planübung durch eine Alternative und behält Trainingswerte und Notiz."
+  replacePlanExercise(planId: ID!, planExerciseId: ID!, externalId: ID!): PlanExercise!
 }
 
 type Health {

@@ -15,6 +15,12 @@ export const planResolvers = {
 
     plan: (_parent: Parent, args: { id: string }, { backend }: GraphQLContext) =>
       planApi.get(backend, args.id),
+
+    alternativesForPlanExercise: (
+      _parent: Parent,
+      args: { planId: string; planExerciseId: string; limit: number },
+      { backend }: GraphQLContext,
+    ) => planApi.alternatives(backend, args.planId, args.planExerciseId, args.limit),
   },
 
   Mutation: {
@@ -47,6 +53,12 @@ export const planResolvers = {
       args: { planId: string; planExerciseId: string },
       { backend }: GraphQLContext,
     ) => planApi.removeExercise(backend, args.planId, args.planExerciseId),
+
+    replacePlanExercise: (
+      _parent: Parent,
+      args: { planId: string; planExerciseId: string; externalId: string },
+      { backend }: GraphQLContext,
+    ) => planApi.replaceExercise(backend, args.planId, args.planExerciseId, args.externalId),
   },
 
   // Feld-Resolver: Felder, die das Backend je nach Endpunkt nicht mitliefert, werden nachgeladen.

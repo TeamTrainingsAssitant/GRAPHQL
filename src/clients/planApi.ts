@@ -1,4 +1,5 @@
 import type { BackendClient } from './backendClient.js';
+import type { BackendExercise } from './exerciseApi.js';
 import type { BackendPlanExercise } from './userApi.js';
 
 // Die Liste liefert exerciseCount aber kein createdAt, der Einzelabruf umgekehrt.
@@ -51,6 +52,12 @@ export const planApi = {
   listExercises: (client: BackendClient, planId: string) =>
     client.request<BackendPlanExercise[]>('GET', `${plan(planId)}/exercises`),
 
+  alternatives: (client: BackendClient, planId: string, planExerciseId: string, limit: number) =>
+    client.request<BackendExercise[]>(
+      'GET',
+      `${exercise(planId, planExerciseId)}/alternatives?limit=${encodeURIComponent(String(limit))}`,
+    ),
+
   addExercise: (client: BackendClient, planId: string, input: AddExerciseInput) =>
     client.request<BackendPlanExercise>('POST', `${plan(planId)}/exercises`, input),
 
@@ -60,6 +67,13 @@ export const planApi = {
     planExerciseId: string,
     input: ExerciseTrainingInput,
   ) => client.request<BackendPlanExercise>('PUT', exercise(planId, planExerciseId), input),
+
+  replaceExercise: (client: BackendClient, planId: string, planExerciseId: string, externalId: string) =>
+    client.request<BackendPlanExercise>(
+      'PUT',
+      `${exercise(planId, planExerciseId)}/replacement`,
+      { externalId },
+    ),
 
   removeExercise: (client: BackendClient, planId: string, planExerciseId: string) =>
     client.request<MessageResponse>('DELETE', exercise(planId, planExerciseId)),
