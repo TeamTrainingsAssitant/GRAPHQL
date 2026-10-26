@@ -1,14 +1,99 @@
 """
 GraphQL-Schema des TrainingsPlanAssistant-Gateways.
-Wird in den nächsten Phasen um Auth, Pläne und Übungen erweitert.
+Wird in den nächsten Phasen um Pläne und Übungen erweitert.
 """
 type Query {
   "Lebenszeichen des Gateways"
   health: Health!
+
+  "Der angemeldete Nutzer (GET /users/me)"
+  me: User!
+
+  "Alle Daten des angemeldeten Nutzers inklusive Pläne und Übungen (GET /users/me/export)"
+  exportMyData: UserExport!
+}
+
+type Mutation {
+  "Registrierung (POST /users)"
+  register(input: RegisterInput!): RegisterResult!
+
+  "Anmeldung, liefert den Bearer-Token (POST /auth)"
+  login(input: LoginInput!): LoginResult!
+
+  "Abmeldung, der Token kommt aus dem Authorization-Header (DELETE /auth)"
+  logout: MessageResult!
+
+  "Konto löschen, zur Sicherheit mit Passwort (DELETE /users/me)"
+  deleteAccount(password: String!): MessageResult!
 }
 
 type Health {
   status: String!
   "Zeitpunkt der Antwort (ISO 8601)"
   time: String!
+}
+
+type User {
+  userId: ID!
+  username: String!
+  email: String!
+  "Datum der Registrierung (yyyy-MM-dd)"
+  createdAt: String!
+}
+
+input RegisterInput {
+  username: String!
+  email: String!
+  "mindestens 8 Zeichen"
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type RegisterResult {
+  message: String!
+  userId: ID!
+}
+
+type LoginResult {
+  message: String!
+  token: String!
+}
+
+type MessageResult {
+  message: String!
+}
+
+"Übung in einem Plan. Name, GIF und Muskeln sind aus ExerciseDB kopiert."
+type PlanExercise {
+  id: ID!
+  externalId: String!
+  name: String!
+  gifUrl: String
+  primaryMuscleGroups: [String!]!
+  secondaryMuscleGroups: [String!]!
+  position: Int!
+  note: String
+  "Gewicht in kg"
+  weight: Float
+  sets: Int
+  reps: Int
+}
+
+"Plan mit eingebetteten Übungen, nur für den Datenexport"
+type ExportedPlan {
+  id: ID!
+  name: String!
+  description: String
+  createdAt: String!
+  updatedAt: String!
+  exercises: [PlanExercise!]!
+}
+
+type UserExport {
+  user: User!
+  plans: [ExportedPlan!]!
 }
