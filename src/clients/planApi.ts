@@ -75,6 +75,12 @@ export const planApi = {
       { externalId },
     ),
 
+  // GraphQL liefert IDs als Text, das Backend erwartet Zahlen
+  reorderExercises: (client: BackendClient, planId: string, planExerciseIds: string[]) =>
+    client.request<BackendPlanExercise[]>('PUT', `${plan(planId)}/exercises/order`, {
+      exerciseIds: planExerciseIds.map(Number),
+    }),
+
   removeExercise: (client: BackendClient, planId: string, planExerciseId: string) =>
     client.request<MessageResponse>('DELETE', exercise(planId, planExerciseId)),
 };

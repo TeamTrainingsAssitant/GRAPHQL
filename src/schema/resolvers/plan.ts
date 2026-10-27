@@ -54,6 +54,12 @@ export const planResolvers = {
       { backend }: GraphQLContext,
     ) => planApi.removeExercise(backend, args.planId, args.planExerciseId),
 
+    reorderPlanExercises: (
+      _parent: Parent,
+      args: { planId: string; planExerciseIds: string[] },
+      { backend }: GraphQLContext,
+    ) => planApi.reorderExercises(backend, args.planId, args.planExerciseIds),
+
     replacePlanExercise: (
       _parent: Parent,
       args: { planId: string; planExerciseId: string; externalId: string },

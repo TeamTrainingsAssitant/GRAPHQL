@@ -75,6 +75,12 @@ type Mutation {
   "Übung aus einem Plan entfernen (DELETE /plans/{id}/exercises/{peId})"
   removePlanExercise(planId: ID!, planExerciseId: ID!): MessageResult!
 
+  """
+  Ändert die Reihenfolge der Übungen eines Plans (PUT /plans/{id}/exercises/order).
+  planExerciseIds muss alle Übungen des Plans in der neuen Reihenfolge enthalten.
+  """
+  reorderPlanExercises(planId: ID!, planExerciseIds: [ID!]!): [PlanExercise!]!
+
   "Ersetzt eine Planübung durch eine Alternative und behält Trainingswerte und Notiz."
   replacePlanExercise(planId: ID!, planExerciseId: ID!, externalId: ID!): PlanExercise!
 }

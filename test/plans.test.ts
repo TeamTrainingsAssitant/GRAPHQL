@@ -164,6 +164,21 @@ describe('Pläne ändern', () => {
     expect(request).toHaveBeenCalledWith('PUT', '/plans/1/exercises/9', { weight: 62.5 });
   });
 
+  it('reorderPlanExercises sendet PUT /plans/{id}/exercises/order mit numerischen IDs', async () => {
+    const second = { ...bench, id: 4, position: 1 };
+    const first = { ...bench, id: 9, position: 2 };
+    const { result, request } = await run(
+      'mutation { reorderPlanExercises(planId: "1", planExerciseIds: ["4", "9"]) { id position } }',
+      { 'PUT /plans/1/exercises/order': [second, first] },
+    );
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      reorderPlanExercises: [{ id: '4', position: 1 }, { id: '9', position: 2 }],
+    });
+    expect(request).toHaveBeenCalledWith('PUT', '/plans/1/exercises/order', { exerciseIds: [4, 9] });
+  });
+
   it('removePlanExercise sendet DELETE /plans/{id}/exercises/{peId}', async () => {
     const { result } = await run(
       'mutation { removePlanExercise(planId: "1", planExerciseId: "9") { message } }',

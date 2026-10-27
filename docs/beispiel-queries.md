@@ -62,6 +62,18 @@ mutation {
 }
 ```
 
+Reihenfolge der Übungen ändern (alle Übungs-IDs des Plans in der neuen Reihenfolge):
+
+```graphql
+mutation {
+  reorderPlanExercises(planId: "1", planExerciseIds: ["12", "7", "9"]) {
+    id
+    name
+    position
+  }
+}
+```
+
 ## Der Vorteil gegenüber REST: alles in einer Anfrage
 
 REST braucht dafür `GET /plans` und pro Plan `GET /plans/{id}/exercises`. Hier genügt eine Anfrage, und nur die
