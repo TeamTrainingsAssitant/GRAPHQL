@@ -28,6 +28,12 @@ export function extractToken(header: string | null): string | undefined {
   return match?.[1];
 }
 
+export function extractCookieToken(header: string | null): string | undefined {
+  if (!header) return undefined;
+  const cookie = header.split(';').map((part) => part.trim()).find((part) => part.startsWith('capsule_session='));
+  return cookie?.slice('capsule_session='.length) || undefined;
+}
+
 // Setzt den Kontext zusammen. Ohne Angabe bekommt jeder Aufruf einen frischen, leeren Cache (praktisch für Tests).
 export function buildContext(
   token: string | undefined,
@@ -39,6 +45,7 @@ export function buildContext(
 
 // Wird pro Anfrage aufgerufen: jede Anfrage bekommt einen eigenen Client und eigene Loader mit ihrem Token
 export function createContext({ request }: { request: Request }): GraphQLContext {
-  const token = extractToken(request.headers.get('authorization'));
+  const token = extractToken(request.headers.get('authorization'))
+    ?? extractCookieToken(request.headers.get('cookie'));
   return buildContext(token, createBackendClient({ token }), catalogCache);
 }
