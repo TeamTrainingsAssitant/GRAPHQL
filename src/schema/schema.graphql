@@ -133,7 +133,7 @@ type PlanExercise {
   gifUrl: String
   primaryMuscleGroups: [String!]!
   secondaryMuscleGroups: [String!]!
-  trainingSets: [TrainingSet!]!
+  trainingSets: [TrainingSet!]
   position: Int!
   note: String
   "Gewicht in kg"
