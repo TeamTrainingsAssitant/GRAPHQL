@@ -6,6 +6,7 @@ import {
   type PlanInput,
 } from '../../clients/planApi.js';
 import type { GraphQLContext } from '../../context.js';
+import type { BackendPlanExercise } from '../../clients/userApi.js';
 
 type Parent = unknown;
 
@@ -46,7 +47,18 @@ export const planResolvers = {
       _parent: Parent,
       args: { planId: string; planExerciseId: string; input: ExerciseTrainingInput },
       { backend }: GraphQLContext,
-    ) => planApi.updateExercise(backend, args.planId, args.planExerciseId, args.input),
+    ) => {
+      const sets = args.input.trainingSets;
+      const input = sets
+        ? {
+            ...args.input,
+            sets: sets.length,
+            weight: sets[0]?.weight ?? null,
+            reps: sets[0]?.reps ?? null,
+          }
+        : args.input;
+      return planApi.updateExercise(backend, args.planId, args.planExerciseId, input);
+    },
 
     removePlanExercise: (
       _parent: Parent,
@@ -78,5 +90,9 @@ export const planResolvers = {
 
     createdAt: async (parent: BackendPlan, _args: unknown, { loaders }: GraphQLContext) =>
       parent.createdAt ?? (await loaders.planById.load(String(parent.id))).createdAt,
+  },
+
+  PlanExercise: {
+    trainingSets: (parent: BackendPlanExercise) => parent.trainingSets ?? [],
   },
 };
