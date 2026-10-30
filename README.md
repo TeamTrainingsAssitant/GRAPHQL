@@ -9,12 +9,13 @@ Angular-SPA ──GraphQL──▶ Gateway (dieses Repo) ──REST──▶ Spr
                                                     └──────▶ ExerciseDB (über das Backend)
 ```
 
-- Der Bearer-Token des Frontends wird bei jeder Anfrage an das Backend durchgereicht (zustandslos).
+- Der Token kommt aus dem Header `Authorization` oder dem Cookie `capsule_session` und wird bei jeder Anfrage an das Backend durchgereicht (zustandslos).
+- Im Browser läuft der Weg über den Proxy in `FrontEnd/server.mjs`, der das Cookie in den Bearer-Header umwandelt.
 - Das REST-API des Backends bleibt unverändert bestehen. So lassen sich REST und GraphQL vergleichen.
 
 ## Stack
 
-Node.js (>= 22), TypeScript, GraphQL Yoga, DataLoader, Vitest, ESLint, Prettier.
+Node.js (22 oder 24), TypeScript, GraphQL Yoga, DataLoader, Vitest, ESLint, Prettier.
 
 ## Ordnerstruktur
 
@@ -39,7 +40,22 @@ npm run dev
 ```
 
 Danach läuft GraphQL (mit GraphiQL im Browser) unter http://localhost:4000/graphql.
-Test-Anfrage: `{ health { status time } }`. Tests: `npm test`.
+Test-Anfrage: `{ health { status time } }`.
+
+| Befehl | Zweck |
+|---|---|
+| `npm test` | Tests mit Vitest |
+| `npm run typecheck` | Typen prüfen |
+| `npm run lint` | ESLint |
+| `npm run format` | Prettier |
+| `npm run build` | Build nach `dist/` |
+
+## API
+
+Das vollständige Schema steht in [src/schema/schema.graphql](src/schema/schema.graphql).
+
+- **Queries:** `health`, `me`, `exportMyData`, `plans`, `plan`, `searchExercises`, `exercises`, `exercise`, `alternativesForPlanExercise`, `muscles`, `bodyParts`
+- **Mutations:** Konto (`register`, `login`, `logout`, `deleteAccount`), Pläne (`createPlan`, `updatePlan`, `deletePlan`), Planübungen (`addExerciseToPlan`, `updatePlanExercise`, `removePlanExercise`, `reorderPlanExercises`, `replacePlanExercise`)
 
 ## Konfiguration
 
@@ -63,8 +79,8 @@ heroku config:set CORS_ORIGINS=https://trainingsplan-frontend-be8f5157e428.herok
 git push heroku main
 ```
 
-Danach die Adresse `https://<gateway-app-name>.herokuapp.com/graphql` im Frontend in
-`angular/src/app/config.ts` eintragen. Beispiel-Anfragen: [docs/beispiel-queries.md](docs/beispiel-queries.md).
+Das Frontend erreicht das Gateway über seinen Proxy. Eine neue Adresse wird dort als `GRAPHQL_BASE_URL`
+gesetzt (`https://<gateway-app-name>.herokuapp.com`, ohne `/graphql`). Beispiel-Anfragen: [docs/beispiel-queries.md](docs/beispiel-queries.md).
 
 ## Performance
 
