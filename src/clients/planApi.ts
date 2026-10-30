@@ -27,6 +27,7 @@ export interface ExerciseTrainingInput {
   weight?: number | null;
   sets?: number | null;
   reps?: number | null;
+  trainingSets?: { weight: number | null; reps: number | null; completed: boolean }[] | null;
 }
 
 export type AddExerciseInput = ExerciseTrainingInput & { externalId: string };

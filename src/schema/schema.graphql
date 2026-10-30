@@ -133,12 +133,19 @@ type PlanExercise {
   gifUrl: String
   primaryMuscleGroups: [String!]!
   secondaryMuscleGroups: [String!]!
+  trainingSets: [TrainingSet!]!
   position: Int!
   note: String
   "Gewicht in kg"
   weight: Float
   sets: Int
   reps: Int
+}
+
+type TrainingSet {
+  weight: Float
+  reps: Int
+  completed: Boolean!
 }
 
 """
@@ -197,6 +204,13 @@ input UpdatePlanExerciseInput {
   weight: Float
   sets: Int
   reps: Int
+  trainingSets: [TrainingSetInput!]
+}
+
+input TrainingSetInput {
+  weight: Float
+  reps: Int
+  completed: Boolean!
 }
 
 "Plan mit eingebetteten Übungen, nur für den Datenexport"
