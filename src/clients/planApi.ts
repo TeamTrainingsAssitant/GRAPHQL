@@ -30,17 +30,6 @@ export interface ExerciseTrainingInput {
   trainingSets?: { weight: number; reps: number }[] | null;
 }
 
-type BackendTrainingSetInput = { weight: number; reps: number; completed: boolean };
-
-const withBackendSetCompatibility = <T extends ExerciseTrainingInput>(input: T):
-  Omit<T, 'trainingSets'> & { trainingSets?: BackendTrainingSetInput[] | null } => {
-  const { trainingSets, ...otherInput } = input;
-  return {
-    ...otherInput,
-    trainingSets: trainingSets?.map((set) => ({ ...set, completed: false })) ?? trainingSets,
-  };
-};
-
 export type AddExerciseInput = ExerciseTrainingInput & { externalId: string };
 
 const plan = (planId: string) => `/plans/${encodeURIComponent(planId)}`;
@@ -71,22 +60,14 @@ export const planApi = {
     ),
 
   addExercise: (client: BackendClient, planId: string, input: AddExerciseInput) =>
-    client.request<BackendPlanExercise>(
-      'POST',
-      `${plan(planId)}/exercises`,
-      withBackendSetCompatibility(input),
-    ),
+    client.request<BackendPlanExercise>('POST', `${plan(planId)}/exercises`, input),
 
   updateExercise: (
     client: BackendClient,
     planId: string,
     planExerciseId: string,
     input: ExerciseTrainingInput,
-  ) => client.request<BackendPlanExercise>(
-    'PUT',
-    exercise(planId, planExerciseId),
-    withBackendSetCompatibility(input),
-  ),
+  ) => client.request<BackendPlanExercise>('PUT', exercise(planId, planExerciseId), input),
 
   replaceExercise: (client: BackendClient, planId: string, planExerciseId: string, externalId: string) =>
     client.request<BackendPlanExercise>(
