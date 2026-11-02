@@ -15,7 +15,7 @@ export interface BackendPlanExercise {
   gifUrl: string | null;
   primaryMuscleGroups: string[];
   secondaryMuscleGroups: string[];
-  trainingSets?: { weight: number | null; reps: number | null; completed: boolean }[] | null;
+  trainingSets?: { weight: number | null; reps: number | null }[] | null;
   position: number;
   note: string | null;
   weight: number | null;

@@ -147,7 +147,6 @@ type PlanExercise {
 type TrainingSet {
   weight: Float
   reps: Int
-  completed: Boolean!
 }
 
 """
@@ -213,7 +212,6 @@ input UpdatePlanExerciseInput {
 input TrainingSetInput {
   weight: Float!
   reps: Int!
-  completed: Boolean!
 }
 
 "Plan mit eingebetteten Übungen, nur für den Datenexport"
