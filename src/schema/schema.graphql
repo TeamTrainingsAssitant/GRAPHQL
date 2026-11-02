@@ -136,9 +136,11 @@ type PlanExercise {
   trainingSets: [TrainingSet!]
   position: Int!
   note: String
-  "Gewicht in kg"
+  "Legacy summary: weight of the first set in kg"
   weight: Float
+  "Legacy summary: number of sets"
   sets: Int
+  "Legacy summary: reps in the first set"
   reps: Int
 }
 
@@ -197,6 +199,7 @@ input AddPlanExerciseInput {
   sets: Int
   "1 bis 100"
   reps: Int
+  trainingSets: [TrainingSetInput!]
 }
 
 input UpdatePlanExerciseInput {
@@ -208,8 +211,8 @@ input UpdatePlanExerciseInput {
 }
 
 input TrainingSetInput {
-  weight: Float
-  reps: Int
+  weight: Float!
+  reps: Int!
   completed: Boolean!
 }
 

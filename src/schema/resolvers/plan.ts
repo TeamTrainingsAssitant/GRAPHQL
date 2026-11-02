@@ -48,16 +48,7 @@ export const planResolvers = {
       args: { planId: string; planExerciseId: string; input: ExerciseTrainingInput },
       { backend }: GraphQLContext,
     ) => {
-      const sets = args.input.trainingSets;
-      const input = sets
-        ? {
-            ...args.input,
-            sets: sets.length,
-            weight: sets[0]?.weight ?? null,
-            reps: sets[0]?.reps ?? null,
-          }
-        : args.input;
-      return planApi.updateExercise(backend, args.planId, args.planExerciseId, input);
+      return planApi.updateExercise(backend, args.planId, args.planExerciseId, args.input);
     },
 
     removePlanExercise: (
