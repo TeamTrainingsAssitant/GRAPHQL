@@ -64,7 +64,8 @@ type Mutation {
 
   """
   Notiz, Gewicht, Sätze und Wiederholungen einer Übung ändern (PUT /plans/{id}/exercises/{peId}).
-  Nicht angegebene Felder werden entfernt (null), wie beim REST-Endpunkt.
+  Nicht angegebene Trainingsfelder bleiben unverändert. Eine leere trainingSets-Liste entfernt
+  die bisherigen Trainingswerte.
   """
   updatePlanExercise(
     planId: ID!
