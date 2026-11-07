@@ -9,11 +9,14 @@ export const authResolvers = {
       { backend }: GraphQLContext,
     ) => userApi.register(backend, args.input),
 
-    login: (
+    login: async (
       _parent: unknown,
       args: { input: { email: string; password: string } },
-      { backend }: GraphQLContext,
-    ) => userApi.login(backend, args.input),
+      context: GraphQLContext,
+    ) => {
+      const result = await userApi.login(context.backend, args.input);
+      return { ...result, token: context.loginSession.token ?? result.token };
+    },
 
     logout: (_parent: unknown, _args: unknown, context: GraphQLContext) =>
       userApi.logout(context.backend, requireToken(context)),

@@ -11,6 +11,7 @@ Angular-SPA ──GraphQL──▶ Gateway (dieses Repo) ──REST──▶ Spr
 
 - Der Token kommt aus dem Header `Authorization` oder dem Cookie `capsule_session` und wird bei jeder Anfrage an das Backend durchgereicht (zustandslos).
 - Im Browser läuft der Weg über den Proxy in `FrontEnd/server.mjs`, der das Cookie in den Bearer-Header umwandelt.
+- Die GraphQL-Mutation `login` liefert API-Clients das Token. Über den Frontend-Proxy wird es stattdessen als `HttpOnly`-Cookie gesetzt und aus der Browser-Antwort entfernt.
 - Das REST-API des Backends bleibt unverändert bestehen. So lassen sich REST und GraphQL vergleichen.
 
 ## Stack

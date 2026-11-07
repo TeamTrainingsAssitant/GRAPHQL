@@ -3,11 +3,13 @@
 Endpunkt lokal: `http://localhost:4000/graphql` (im Browser öffnet sich dort GraphiQL).
 Variablen und Header stehen in GraphiQL unten im Bereich "Variables" bzw. "Headers".
 
-Für alle Anfragen außer `register` und `login` braucht ihr den Token aus `login` im Header:
+Bei direktem Zugriff auf das Gateway braucht ihr für geschützte Anfragen den Token aus `login` im Header:
 
 ```json
 { "Authorization": "Bearer <token>" }
 ```
+
+Der Browser-Login über das Frontend läuft ebenfalls über die GraphQL-Mutation. Der Frontend-Proxy speichert das Token als `HttpOnly`-Cookie; JavaScript muss es nicht auslesen oder selbst im Header setzen.
 
 ## Anmeldung
 

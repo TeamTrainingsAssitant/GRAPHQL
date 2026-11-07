@@ -6,6 +6,7 @@ import { createPlanLoaders, type PlanLoaders } from './loaders/planLoaders.js';
 
 export interface GraphQLContext {
   token: string | undefined;
+  loginSession: { token?: string };
   backend: BackendClient;
   // pro Anfrage neu, sammelt Plan-Abfragen (DataLoader)
   loaders: PlanLoaders;
@@ -39,13 +40,19 @@ export function buildContext(
   token: string | undefined,
   backend: BackendClient,
   cache: TtlCache<unknown> = new TtlCache({ ttlMs: 60_000 }),
+  loginSession: { token?: string } = {},
 ): GraphQLContext {
-  return { token, backend, loaders: createPlanLoaders(backend), cache };
+  return { token, backend, loginSession, loaders: createPlanLoaders(backend), cache };
 }
 
 // Wird pro Anfrage aufgerufen: jede Anfrage bekommt einen eigenen Client und eigene Loader mit ihrem Token
 export function createContext({ request }: { request: Request }): GraphQLContext {
   const token = extractToken(request.headers.get('authorization'))
     ?? extractCookieToken(request.headers.get('cookie'));
-  return buildContext(token, createBackendClient({ token }), catalogCache);
+  const loginSession: { token?: string } = {};
+  const backend = createBackendClient({
+    token,
+    onLoginToken: (loginToken) => loginSession.token = loginToken,
+  });
+  return buildContext(token, backend, catalogCache, loginSession);
 }

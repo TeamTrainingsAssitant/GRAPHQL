@@ -1,7 +1,4 @@
-"""
-GraphQL-Schema des TrainingsPlanAssistant-Gateways.
-Wird in den nächsten Phasen um Pläne und Übungen erweitert.
-"""
+"GraphQL API des TrainingsPlanAssistant-Gateways."
 type Query {
   "Lebenszeichen des Gateways"
   health: Health!
@@ -119,7 +116,8 @@ type RegisterResult {
 
 type LoginResult {
   message: String!
-  token: String!
+  "Token für API-Clients; der Frontend-Proxy ersetzt es durch ein HttpOnly-Cookie."
+  token: String
 }
 
 type MessageResult {

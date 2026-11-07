@@ -44,7 +44,7 @@ export const userApi = {
     client.request<MessageResponse & { userId: number }>('POST', '/users', input),
 
   login: (client: BackendClient, input: { email: string; password: string }) =>
-    client.request<MessageResponse & { token: string }>('POST', '/auth', input),
+    client.request<MessageResponse & { token: string | null }>('POST', '/auth', input),
 
   // Das Backend erwartet den Token beim Abmelden im Body
   logout: (client: BackendClient, token: string) =>

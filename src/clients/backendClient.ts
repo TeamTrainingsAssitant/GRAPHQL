@@ -6,6 +6,8 @@ type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export interface BackendClientOptions {
   // Bearer-Token des Aufrufers, wird nur durchgereicht (das Gateway hat keine Session)
   token?: string;
+  // Das Backend gibt das Session-Token beim Login als HttpOnly-Cookie zurück.
+  onLoginToken?: (token: string) => void;
   baseUrl?: string;
   timeoutMs?: number;
   // austauschbar für Tests
@@ -19,6 +21,7 @@ export interface BackendClient {
 export function createBackendClient(options: BackendClientOptions = {}): BackendClient {
   const {
     token,
+    onLoginToken,
     baseUrl = config.backendBaseUrl,
     timeoutMs = 10_000,
     fetchImpl = fetch,
@@ -43,6 +46,13 @@ export function createBackendClient(options: BackendClientOptions = {}): Backend
 
     // Antworten ohne Inhalt (oder ohne gültiges JSON) werden als leer behandelt
     const payload: unknown = await response.json().catch(() => undefined);
+
+    if (response.ok && method === 'POST' && path === '/auth' && onLoginToken) {
+      const sessionCookie = response.headers.getSetCookie()
+        .find((cookie) => cookie.startsWith('capsule_session='));
+      const sessionToken = sessionCookie?.slice('capsule_session='.length).split(';', 1)[0];
+      if (sessionToken) onLoginToken(sessionToken);
+    }
 
     if (!response.ok) {
       const message =
