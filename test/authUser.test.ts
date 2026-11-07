@@ -78,7 +78,6 @@ describe('User', () => {
           {
             id: 3,
             name: 'Push',
-            description: null,
             createdAt: '2026-10-26T10:00:00',
             updatedAt: '2026-10-26T10:00:00',
             exercises: [{ id: 9, name: 'Bench Press', sets: 3, reps: 10, weight: 60 }],

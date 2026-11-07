@@ -173,7 +173,6 @@ type ExerciseList {
 type Plan {
   id: ID!
   name: String!
-  description: String
   createdAt: String!
   updatedAt: String!
   exerciseCount: Int!
@@ -183,7 +182,6 @@ type Plan {
 
 input PlanInput {
   name: String!
-  description: String
 }
 
 input AddPlanExerciseInput {
@@ -217,7 +215,6 @@ input TrainingSetInput {
 type ExportedPlan {
   id: ID!
   name: String!
-  description: String
   createdAt: String!
   updatedAt: String!
   exercises: [PlanExercise!]!

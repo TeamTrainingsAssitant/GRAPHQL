@@ -40,7 +40,7 @@ Plan anlegen:
 
 ```graphql
 mutation {
-  createPlan(input: { name: "Push-Tag", description: "Brust und Schulter" }) {
+  createPlan(input: { name: "Push-Tag" }) {
     id
     name
   }
