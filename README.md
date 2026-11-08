@@ -81,7 +81,7 @@ git push heroku main
 ```
 
 Das Frontend erreicht das Gateway über seinen Proxy. Eine neue Adresse wird dort als `GRAPHQL_BASE_URL`
-gesetzt (`https://<gateway-app-name>.herokuapp.com`, ohne `/graphql`). Beispiel-Anfragen: [docs/beispiel-queries.md](docs/beispiel-queries.md).
+gesetzt (`https://<gateway-app-name>.herokuapp.com`, ohne `/graphql`).
 
 ## Performance
 
