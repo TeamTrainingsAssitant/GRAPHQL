@@ -7,7 +7,6 @@ import type { BackendPlanExercise } from './userApi.js';
 export interface BackendPlan {
   id: number;
   name: string;
-  description: string | null;
   createdAt?: string;
   updatedAt: string;
   exerciseCount?: number;
@@ -19,7 +18,6 @@ interface MessageResponse {
 
 export interface PlanInput {
   name: string;
-  description?: string | null;
 }
 
 export interface ExerciseTrainingInput {

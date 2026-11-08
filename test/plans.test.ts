@@ -14,8 +14,8 @@ function run(source: string, responses: Record<string, unknown>, token = 'tok') 
   return graphql({ schema, source, contextValue }).then((result) => ({ result, request }));
 }
 
-const listItem = { id: 1, name: 'Push', description: null, updatedAt: '2026-10-26T10:00:00', exerciseCount: 2 };
-const detail = { id: 1, name: 'Push', description: null, createdAt: '2026-10-20T09:00:00', updatedAt: '2026-10-26T10:00:00' };
+const listItem = { id: 1, name: 'Push', updatedAt: '2026-10-26T10:00:00', exerciseCount: 2 };
+const detail = { id: 1, name: 'Push', createdAt: '2026-10-20T09:00:00', updatedAt: '2026-10-26T10:00:00' };
 const bench = {
   id: 9, externalId: 'x1', name: 'Bench Press', gifUrl: null,
   primaryMuscleGroups: ['chest'], secondaryMuscleGroups: [], position: 0,
@@ -126,11 +126,11 @@ describe('Pläne ändern', () => {
 
   it('updatePlan sendet PUT /plans/{id}', async () => {
     const { request } = await run(
-      'mutation { updatePlan(id: "1", input: {name: "Pull", description: "Rücken"}) { id } }',
+      'mutation { updatePlan(id: "1", input: {name: "Pull"}) { id } }',
       { 'PUT /plans/1': detail },
     );
 
-    expect(request).toHaveBeenCalledWith('PUT', '/plans/1', { name: 'Pull', description: 'Rücken' });
+    expect(request).toHaveBeenCalledWith('PUT', '/plans/1', { name: 'Pull' });
   });
 
   it('deletePlan sendet DELETE /plans/{id}', async () => {
